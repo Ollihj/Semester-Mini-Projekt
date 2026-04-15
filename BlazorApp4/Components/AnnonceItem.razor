@@ -1,0 +1,13 @@
+@using Core.Models
+
+<div class="card p-2 mb-2">
+    <h5>@Item.Titel</h5>
+    <p>@Item.Description</p>
+    <p>Pris: @Item.pris</p>
+    <p>Dato: @Item.oprettet</p>
+</div>
+
+@code {
+    [Parameter]
+    public annoncer Item { get; set; }
+}

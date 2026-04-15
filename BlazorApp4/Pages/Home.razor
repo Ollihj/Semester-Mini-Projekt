@@ -1,7 +1,20 @@
 ﻿@page "/"
+@using BlazorApp4.Service
+@using Core.Models
+@inject IItemService itemService
 
-<PageTitle>Home</PageTitle>
+@foreach (var item in annoncer)
+{
+    <ProductItem Item="item" />
+}
 
-<h1>Hello, world!</h1>
+@code
+{
+    private List<annoncer> annoncer = new();
 
-Welcome to your new app.
+    protected override async Task OnInitializedAsync()
+    {
+        
+      annoncer = await itemService.GetAll();
+    }
+}
