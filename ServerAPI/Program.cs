@@ -6,6 +6,8 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddSingleton<IBrugerRepository, BrugerRepositoryMongoDB>();
+builder.Services.AddSingleton<IAnnonceRepository, AnnonceRepositoryMongoDB>();
+builder.Services.AddSingleton<IKøbsanmodningRepository, KøbsanmodningRepositoryMongoDB>();
 
 builder.Services.AddCors(options =>
 {
