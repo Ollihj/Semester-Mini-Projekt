@@ -1,0 +1,94 @@
+@page "/createannonce"
+@using Core.Models
+
+<PageTitle>Opret ny annonce</PageTitle>
+
+<div class="form-container">
+    <div class="form-header">
+        <h2>Opret ny annonce</h2>
+        <button class="close-btn" @onclick="GoBack">✕</button>
+    </div>
+
+    <div class="form-group">
+        <label for="titel">Titel <span class="required">*</span></label>
+        <input id="titel" @bind="newAnnonce.Titel" class="form-control" placeholder="F.eks. iPhone 12 64GB" />
+    </div>
+
+    <div class="form-group">
+        <label for="description">Beskrivelse <span class="required">*</span></label>
+        <textarea id="description" @bind="newAnnonce.Description" class="form-control" placeholder="Beskriv varen i detaljer..." rows="5"></textarea>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="pris">Pris (kr) <span class="required">*</span></label>
+            <input id="pris" type="number" @bind="newAnnonce.pris" class="form-control" placeholder="0" />
+        </div>
+        <div class="form-group">
+            <label for="kategori">Kategori <span class="required">*</span></label>
+            <select id="kategori" @bind="kategori" class="form-control">
+                <option value="">Vælg kategori</option>
+                <option value="Elektronik">Elektronik</option>
+                <option value="Møbler">Møbler</option>
+                <option value="Tøj">Tøj</option>
+                <option value="Biler">Biler</option>
+                <option value="Sport">Sport</option>
+                <option value="Hjem">Hjem & Have</option>
+                <option value="Andet">Andet</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="lokation">Lokation <span class="required">*</span></label>
+        <select id="lokation" @bind="lokation" class="form-control">
+            <option value="">Vælg lokation</option>
+            <option value="Bygning A">Bygning A</option>
+            <option value="Bygning B">Bygning B</option>
+            <option value="Bygning C">Bygning C</option>
+            <option value="Lager">Lager</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="billede">Billede URL (valgfri)</label>
+        <input id="billede" @bind="billedeUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+        <small>Du kan tilføje et link til et billede af varen</small>
+    </div>
+
+    <div class="form-actions">
+        <button class="btn btn-primary" @onclick="CreateAnnonce">Opret annonce</button>
+        <button class="btn btn-secondary" @onclick="GoBack">Annuller</button>
+    </div>
+</div>
+
+@code {
+    [Inject] NavigationManager Navigation { get; set; }
+    
+    private annoncer newAnnonce = new annoncer();
+    private string kategori = "";
+    private string lokation = "";
+    private string billedeUrl = "";
+
+    private void CreateAnnonce()
+    {
+        // Set creation date
+        newAnnonce.oprettet = DateTime.Now;
+        
+        // Generate a unique ID for the annonce
+        newAnnonce.annonceId = Guid.NewGuid().ToString();
+        
+        // TODO: Add logic to save to database through API
+        // TODO: Handle kategori, lokation, and billedeUrl values
+        
+        // Navigate back to home after creation
+        Navigation.NavigateTo("/");
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/");
+    }
+}
+
+
