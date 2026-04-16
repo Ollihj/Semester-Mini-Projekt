@@ -6,6 +6,7 @@
 <h3>Annoncer</h3>
 
 <button class="btn btn-success" @onclick="VisFormular">Opret annonce</button>
+<button class="btn btn-outline-secondary ms-2" @onclick="HentAnnoncer">↺ Genindlæs</button>
 
 @if (visFormular)
 {
@@ -36,19 +37,57 @@
     </div>
 }
 
-@foreach (var item in annonceList)
-{
-    <AnnonceItem Item="item" />
-}
+<div class="mt-4">
+    <label>Filtrer efter kategori</label>
+    <select class="form-control mb-3" style="max-width:250px;" @onchange="FiltererAnnoncer">
+        <option value="">Alle kategorier</option>
+        <option value="Tøj">Tøj</option>
+        <option value="Elektronik">Elektronik</option>
+        <option value="Møbler">Møbler</option>
+        <option value="Sportsartikler">Sportsartikler</option>
+        <option value="Andet">Andet</option>
+    </select>
+</div>
+
+<div class="row">
+    @foreach (var item in filtreredeAnnoncer)
+    {
+        <div class="col-md-4 mb-3">
+            <AnnonceItem Item="item" />
+        </div>
+    }
+</div>
 
 @code {
     private List<annoncer> annonceList = new();
+    private List<annoncer> filtreredeAnnoncer = new();
     private annoncer nyAnnonce = new();
     private bool visFormular = false;
 
     protected override async Task OnInitializedAsync()
     {
+        await HentAnnoncer();
+    }
+
+    private async Task HentAnnoncer()
+    {
         annonceList = await itemService.GetAll();
+        filtreredeAnnoncer = new List<annoncer>(annonceList);
+        StateHasChanged();
+    }
+
+    private void FiltererAnnoncer(ChangeEventArgs e)
+    {
+        var valgtKategori = e.Value?.ToString();
+
+        if (string.IsNullOrEmpty(valgtKategori))
+        {
+            filtreredeAnnoncer = new List<annoncer>(annonceList);
+        }
+        else
+        {
+            filtreredeAnnoncer = annonceList.Where(a => a.kategori == valgtKategori).ToList();
+        }
     }
 
     private void VisFormular()
@@ -76,6 +115,6 @@
         await itemService.Add(nyAnnonce);
 
         LukFormular();
-        annonceList = await itemService.GetAll();
+        await HentAnnoncer();
     }
 }

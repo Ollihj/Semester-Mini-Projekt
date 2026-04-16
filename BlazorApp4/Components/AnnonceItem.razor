@@ -1,10 +1,13 @@
 @using Core.Models
 
-<div class="card p-2 mb-2">
-    <h5>@Item.Titel</h5>
-    <p>@Item.Description</p>
-    <p>Pris: @Item.pris</p>
-    <p>Dato: @Item.oprettet</p>
+<div class="card h-100">
+    <div class="card-body">
+        <h5 class="card-title">@Item.Titel</h5>
+        <p class="card-text">@Item.Description</p>
+        <p><strong>Pris:</strong> @Item.pris kr.</p>
+        <p><strong>Kategori:</strong> @Item.kategori</p>
+        <span class="badge bg-success">@Item.status</span>
+    </div>
 </div>
 
 @code {
