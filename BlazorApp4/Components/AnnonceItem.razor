@@ -1,9 +1,14 @@
 @using Core.Models
 
-<div class="card h-100">
+@inject NavigationManager Navigation
+
+<div class="card h-100" style="cursor:pointer;" @onclick="GaTilDetail">
+    @if (!string.IsNullOrEmpty(Item.billedeUrl))
+    {
+        <img src="@Item.billedeUrl" class="card-img-top" style="height:200px; object-fit:cover;" alt="billede" />
+    }
     <div class="card-body">
         <h5 class="card-title">@Item.Titel</h5>
-        <p class="card-text">@Item.Description</p>
         <p><strong>Pris:</strong> @Item.pris kr.</p>
         <p><strong>Kategori:</strong> @Item.kategori</p>
         <span class="badge bg-success">@Item.status</span>
@@ -13,4 +18,9 @@
 @code {
     [Parameter]
     public annoncer Item { get; set; }
+
+    private void GaTilDetail()
+    {
+        Navigation.NavigateTo($"/annonce/{Item.annonceId}");
+    }
 }

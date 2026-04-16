@@ -1,0 +1,48 @@
+@page "/annonce/{id}"
+@using Core.Models
+@using BlazorApp4.Service
+@inject IItemService itemService
+@inject NavigationManager Navigation
+
+@if (annonce == null)
+{
+    <p>Henter annonce...</p>
+}
+else
+{
+    <div class="container mt-4" style="max-width:600px;">
+        @if (!string.IsNullOrEmpty(annonce.billedeUrl))
+        {
+            <img src="@annonce.billedeUrl" class="img-fluid rounded mb-3" alt="billede" />
+        }
+
+        <h2>@annonce.Titel</h2>
+        <h4 class="text-success">@annonce.pris kr.</h4>
+
+        <p><strong>Kategori:</strong> @annonce.kategori</p>
+        <p><strong>Beskrivelse:</strong> @annonce.Description</p>
+        <p><strong>Oprettet:</strong> @annonce.oprettet.ToShortDateString()</p>
+        <span class="badge bg-success">@annonce.status</span>
+
+        <div class="mt-4">
+            <button class="btn btn-secondary" @onclick="GaTilbage">← Tilbage</button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    private annoncer? annonce;
+
+    protected override async Task OnInitializedAsync()
+    {
+        annonce = await itemService.GetById(id);
+    }
+
+    private void GaTilbage()
+    {
+        Navigation.NavigateTo("/");
+    }
+}

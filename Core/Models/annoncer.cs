@@ -10,4 +10,5 @@ public class annoncer
     public string? status { get; set; }
     public string? brugerID { get; set; }
     public string? kategori { get; set; }
+    public string? billedeUrl { get; set; }
 }

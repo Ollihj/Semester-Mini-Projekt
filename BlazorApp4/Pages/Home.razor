@@ -35,8 +35,11 @@
             <option value="Andet">Andet</option>
         </select>
 
+        <label>Billede URL (valgfri)</label>
+        <input class="form-control mb-2" @bind="nyAnnonce.billedeUrl" placeholder="https://..." />
+
         <button class="btn btn-primary" @onclick="OpretAnnonce">Opret</button>
-        <button class="btn btn-secondary" @onclick="LukFormular">Annuller</button>
+        <button class="btn btn-secondary ms-2" @onclick="LukFormular">Annuller</button>
     </div>
 }
 
@@ -76,7 +79,7 @@
             Navigation.NavigateTo("/login");
             return;
         }
-        
+
         await HentAnnoncer();
     }
 
