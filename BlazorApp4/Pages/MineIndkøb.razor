@@ -1,0 +1,61 @@
+@page "/mineindkøb"
+@using BlazorApp4.Service
+@using Core.Models
+@inject IItemService itemService
+
+<h3>Mine Indkøb</h3>
+
+@if (mineKøbsanmodninger == null)
+{
+    <p>Loading...</p>
+}
+else if (!mineKøbsanmodninger.Any())
+{
+    <p>Du har ingen købsanmodninger endnu.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var køb in mineKøbsanmodninger)
+        {
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Købsanmodning ID: @køb.købsanmodningID</h5>
+                        <p class="card-text"><strong>Annonce ID:</strong> @køb.annonceId</p>
+                        <p class="card-text"><strong>Status:</strong> @køb.status</p>
+                        <p class="card-text"><small class="text-muted">Dato: @køb.dato.ToShortDateString()</small></p>
+                        <!-- TODO: Later show actual ad details instead of just ID -->
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<købsanmodninger> mineKøbsanmodninger = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // TODO: Create IKøbsanmodningService and implement this properly
+        // For now, this is just a placeholder
+
+        // Placeholder data for demonstration
+        mineKøbsanmodninger = new List<købsanmodninger>
+        {
+            new købsanmodninger
+            {
+                købsanmodningID = "køb1",
+                annonceId = "annonce1",
+                status = "Pending",
+                dato = DateTime.Now.AddDays(-2),
+                brugerID = "user123"
+            }
+        };
+
+        // Later this will be:
+        // var alleKøbsanmodninger = await købsanmodningService.GetAll();
+        // mineKøbsanmodninger = alleKøbsanmodninger.Where(k => k.brugerID == currentUserId).ToList();
+    }
+}

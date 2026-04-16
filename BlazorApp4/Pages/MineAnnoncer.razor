@@ -1,0 +1,47 @@
+@page "/mineannoncer"
+@using BlazorApp4.Service
+@using Core.Models
+@inject IItemService itemService
+
+<h3>Mine Annoncer</h3>
+
+@if (mineAnnoncer == null)
+{
+    <p>Loading...</p>
+}
+else if (!mineAnnoncer.Any())
+{
+    <p>Du har ingen annoncer endnu.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var annonce in mineAnnoncer)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@annonce.Titel</h5>
+                        <p class="card-text">@annonce.Description</p>
+                        <p class="card-text"><strong>Pris:</strong> @annonce.pris kr</p>
+                        <p class="card-text"><small class="text-muted">Oprettet: @annonce.oprettet.ToShortDateString()</small></p>
+                        <p class="card-text"><small class="text-muted">Kategori: @annonce.kategori</small></p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<annoncer> mineAnnoncer = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+        string currentUserId = "user123"; // Placeholder - replace with actual user ID
+
+        var alleAnnoncer = await itemService.GetAll();
+        mineAnnoncer = alleAnnoncer.Where(a => a.brugerID == currentUserId).ToList();
+    }
+}
