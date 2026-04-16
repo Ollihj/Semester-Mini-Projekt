@@ -9,6 +9,7 @@ builder.Services.AddSingleton<IBrugerRepository, BrugerRepositoryMongoDB>();
 builder.Services.AddSingleton<IAnnonceRepository, AnnonceRepositoryMongoDB>();
 builder.Services.AddSingleton<IKøbsanmodningRepository, KøbsanmodningRepositoryMongoDB>();
 
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

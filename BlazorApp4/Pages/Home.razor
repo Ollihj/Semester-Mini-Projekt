@@ -1,20 +1,69 @@
-﻿@page "/"
+@page "/"
 @using BlazorApp4.Service
 @using Core.Models
 @inject IItemService itemService
+
+<h3>Annoncer</h3>
+
+<button class="btn btn-success" @onclick="VisFormular">Opret annonce</button>
+
+@if (visFormular)
+{
+    <div class="border p-3 mt-3">
+        <h4>Opret ny annonce</h4>
+
+        <label>Titel</label>
+        <input class="form-control mb-2" @bind="nyAnnonce.Titel" />
+
+        <label>Beskrivelse</label>
+        <input class="form-control mb-2" @bind="nyAnnonce.Description" />
+
+        <label>Pris</label>
+        <input class="form-control mb-2" type="number" @bind="nyAnnonce.pris" />
+
+        <label>Kategori</label>
+        <input class="form-control mb-2" @bind="nyAnnonce.kategori" />
+
+        <button class="btn btn-primary" @onclick="OpretAnnonce">Opret</button>
+        <button class="btn btn-secondary" @onclick="LukFormular">Annuller</button>
+    </div>
+}
 
 @foreach (var item in annoncer)
 {
     <AnnonceItem Item="item" />
 }
 
-@code
-{
+@code {
     private List<annoncer> annoncer = new();
+    private annoncer nyAnnonce = new();
+    private bool visFormular = false;
 
     protected override async Task OnInitializedAsync()
     {
-        
-      annoncer = await itemService.GetAll();
+        annoncer = await itemService.GetAll();
+    }
+
+    private void VisFormular()
+    {
+        visFormular = true;
+    }
+
+    private void LukFormular()
+    {
+        visFormular = false;
+        nyAnnonce = new();
+    }
+
+    private async Task OpretAnnonce()
+    {
+        nyAnnonce.oprettet = DateTime.Now;
+        nyAnnonce.annonceId = Guid.NewGuid().ToString();
+        nyAnnonce.status = "Aktiv";
+
+        await itemService.Add(nyAnnonce);
+
+        LukFormular();
+        annoncer = await itemService.GetAll();
     }
 }

@@ -1,5 +1,7 @@
 @page "/createannonce"
 @using Core.Models
+@using BlazorApp4.Service
+@inject IItemService itemService
 
 <PageTitle>Opret ny annonce</PageTitle>
 
@@ -57,7 +59,7 @@
     </div>
 
     <div class="form-actions">
-        <button class="btn btn-primary" @onclick="CreateAnnonce">Opret annonce</button>
+        <button class="btn btn-primary" @onclick="async () => await CreateAnnonce()">Opret annonce</button>
         <button class="btn btn-secondary" @onclick="GoBack">Annuller</button>
     </div>
 </div>
@@ -70,18 +72,15 @@
     private string lokation = "";
     private string billedeUrl = "";
 
-    private void CreateAnnonce()
+    private async Task CreateAnnonce()
     {
-        // Set creation date
         newAnnonce.oprettet = DateTime.Now;
-        
-        // Generate a unique ID for the annonce
         newAnnonce.annonceId = Guid.NewGuid().ToString();
-        
-        // TODO: Add logic to save to database through API
-        // TODO: Handle kategori, lokation, and billedeUrl values
-        
-        // Navigate back to home after creation
+        newAnnonce.kategori = kategori;
+        newAnnonce.status = "Aktiv";
+
+        await itemService.Add(newAnnonce);
+
         Navigation.NavigateTo("/");
     }
 
