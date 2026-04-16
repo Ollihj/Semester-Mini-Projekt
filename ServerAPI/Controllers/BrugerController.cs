@@ -29,6 +29,29 @@ public class BrugerController : ControllerBase
         return Ok(bruger);
     }
 
+    [HttpGet("login")]
+    public ActionResult<bruger> Login([FromQuery] string navn, [FromQuery] string password)
+    {
+        var allBrugere = _repository.GetAll();
+        var bruger = allBrugere.FirstOrDefault(b => b.Navn == navn && b.Password == password);
+        
+        if (bruger == null)
+            return Unauthorized(new { message = "Ugyldigt brugernavn eller adgangskode" });
+        
+        return Ok(bruger);
+    }
+
+    [HttpPost("register")]
+    public ActionResult<bruger> Register([FromBody] bruger bruger)
+    {
+        var allBrugere = _repository.GetAll();
+        if (allBrugere.Any(b => b.Navn == bruger.Navn))
+            return BadRequest(new { message = "Brugernavn findes allerede" });
+        
+        _repository.Add(bruger);
+        return Ok(bruger);
+    }
+
     [HttpPost]
     public ActionResult<bruger> Add([FromBody] bruger bruger)
     {

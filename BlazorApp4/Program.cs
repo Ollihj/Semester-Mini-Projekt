@@ -11,5 +11,6 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(Config.ServerUrl) });
 builder.Services.AddScoped<IItemService, ItemServiceHttp>();
+builder.Services.AddScoped<LoginService>();
 
 await builder.Build().RunAsync();
