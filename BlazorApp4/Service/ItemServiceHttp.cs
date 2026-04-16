@@ -14,27 +14,27 @@ public class ItemServiceHttp : IItemService
 
     public async Task<List<annoncer>> GetAll()
     {
-        var data = await client.GetFromJsonAsync<List<annoncer>>($"{Config.ServerUrl}/Home");
+        var data = await client.GetFromJsonAsync<List<annoncer>>($"{Config.ServerUrl}/api/annoncer");
         return data ?? new List<annoncer>();
     }
 
-    public async Task<annoncer?> GetById(int id)
+    public async Task<annoncer?> GetById(string id)
     {
-        return await client.GetFromJsonAsync<annoncer>($"{Config.ServerUrl}/Home/{id}");
+        return await client.GetFromJsonAsync<annoncer>($"{Config.ServerUrl}/api/annoncer/{id}");
     }
 
     public async Task Add(annoncer item)
     {
-        await client.PostAsJsonAsync($"{Config.ServerUrl}/Home", item);
+        await client.PostAsJsonAsync($"{Config.ServerUrl}/api/annoncer", item);
     }
 
     public async Task Update(annoncer item)
     {
-        await client.PutAsJsonAsync($"{Config.ServerUrl}/Home/{item.annonceId}", item);
+        await client.PutAsJsonAsync($"{Config.ServerUrl}/api/annoncer", item);
     }
 
-    public async Task DeleteById(int id)
+    public async Task DeleteById(string id)
     {
-        await client.DeleteAsync($"{Config.ServerUrl}/Home/{id}");
+        await client.DeleteAsync($"{Config.ServerUrl}/api/annoncer/{id}");
     }
 }

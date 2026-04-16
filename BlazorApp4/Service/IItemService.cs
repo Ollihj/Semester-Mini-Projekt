@@ -5,8 +5,8 @@ namespace BlazorApp4.Service;
 public interface IItemService
 {
     Task<List<annoncer>> GetAll();
-    Task<annoncer?> GetById(int id);
+    Task<annoncer?> GetById(string id);
     Task Add(annoncer item);
     Task Update(annoncer item);
-    Task DeleteById(int id);
+    Task DeleteById(string id);
 }
