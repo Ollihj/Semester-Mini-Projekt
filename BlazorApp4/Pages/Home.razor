@@ -22,7 +22,14 @@
         <input class="form-control mb-2" type="number" @bind="nyAnnonce.pris" />
 
         <label>Kategori</label>
-        <input class="form-control mb-2" @bind="nyAnnonce.kategori" />
+        <select class="form-control mb-2" @bind="nyAnnonce.kategori">
+            <option value="" disabled selected>Vælg kategori</option>
+            <option value="Tøj">Tøj</option>
+            <option value="Elektronik">Elektronik</option>
+            <option value="Møbler">Møbler</option>
+            <option value="Sportsartikler">Sportsartikler</option>
+            <option value="Andet">Andet</option>
+        </select>
 
         <button class="btn btn-primary" @onclick="OpretAnnonce">Opret</button>
         <button class="btn btn-secondary" @onclick="LukFormular">Annuller</button>
@@ -57,6 +64,11 @@
 
     private async Task OpretAnnonce()
     {
+        if (string.IsNullOrEmpty(nyAnnonce.kategori))
+        {
+            return;
+        }
+
         nyAnnonce.oprettet = DateTime.Now;
         nyAnnonce.annonceId = Guid.NewGuid().ToString();
         nyAnnonce.status = "Aktiv";
