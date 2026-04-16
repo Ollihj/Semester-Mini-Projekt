@@ -1,4 +1,8 @@
+using MongoDB.Bson.Serialization.Conventions;
 using ServerAPI.Repositories;
+
+var conventionPack = new ConventionPack { new IgnoreExtraElementsConvention(true) };
+ConventionRegistry.Register("IgnoreExtraElements", conventionPack, _ => true);
 
 var builder = WebApplication.CreateBuilder(args);
 

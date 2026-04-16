@@ -36,19 +36,19 @@
     </div>
 }
 
-@foreach (var item in annoncer)
+@foreach (var item in annonceList)
 {
     <AnnonceItem Item="item" />
 }
 
 @code {
-    private List<annoncer> annoncer = new();
+    private List<annoncer> annonceList = new();
     private annoncer nyAnnonce = new();
     private bool visFormular = false;
 
     protected override async Task OnInitializedAsync()
     {
-        annoncer = await itemService.GetAll();
+        annonceList = await itemService.GetAll();
     }
 
     private void VisFormular()
@@ -76,6 +76,6 @@
         await itemService.Add(nyAnnonce);
 
         LukFormular();
-        annoncer = await itemService.GetAll();
+        annonceList = await itemService.GetAll();
     }
 }

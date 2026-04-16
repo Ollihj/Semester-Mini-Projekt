@@ -25,7 +25,8 @@ public class ItemServiceHttp : IItemService
 
     public async Task Add(annoncer item)
     {
-        await client.PostAsJsonAsync($"{Config.ServerUrl}/api/annoncer", item);
+        var response = await client.PostAsJsonAsync($"{Config.ServerUrl}/api/annoncer", item);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task Update(annoncer item)
