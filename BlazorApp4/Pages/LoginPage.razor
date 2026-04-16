@@ -1,8 +1,10 @@
 @page "/login"
 @using Core.Models
 @using BlazorApp4.Service
+@using Blazored.LocalStorage
 @inject NavigationManager Navigation
 @inject LoginService LoginService
+@inject ILocalStorageService LocalStorage
 
 <PageTitle>Log ind</PageTitle>
 
@@ -62,6 +64,7 @@
         if (loggedInUser != null)
         {
             errorText = "";
+            await LocalStorage.SetItemAsync("user", loggedInUser);
             Navigation.NavigateTo("/", true);
         }
         else
@@ -69,4 +72,6 @@
             errorText = "Ugyldigt brugernavn eller adgangskode";
         }
     }
+
+
 }

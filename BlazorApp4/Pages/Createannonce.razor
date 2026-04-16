@@ -1,7 +1,10 @@
 @page "/createannonce"
 @using Core.Models
 @using BlazorApp4.Service
+@using Blazored.LocalStorage
 @inject IItemService itemService
+@inject NavigationManager Navigation
+@inject ILocalStorageService LocalStorage
 
 <PageTitle>Opret ny annonce</PageTitle>
 
@@ -65,19 +68,35 @@
 </div>
 
 @code {
-    [Inject] NavigationManager Navigation { get; set; }
-    
     private annoncer newAnnonce = new annoncer();
     private string kategori = "";
     private string lokation = "";
     private string billedeUrl = "";
+    private Core.Models.bruger? currentUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentUser = await LocalStorage.GetItemAsync<Core.Models.bruger>("user");
+        if (currentUser == null)
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+    }
 
     private async Task CreateAnnonce()
     {
+        if (currentUser == null)
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+
         newAnnonce.oprettet = DateTime.Now;
         newAnnonce.annonceId = Guid.NewGuid().ToString();
         newAnnonce.kategori = kategori;
         newAnnonce.status = "Aktiv";
+        newAnnonce.brugerID = currentUser.brugerID;
 
         await itemService.Add(newAnnonce);
 
@@ -89,5 +108,3 @@
         Navigation.NavigateTo("/");
     }
 }
-
-
