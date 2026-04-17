@@ -3,6 +3,7 @@
 @using Core.Models
 @inject IItemService itemService
 @inject IKøbsanmodningerService købsService
+@inject IBrugerService brugerService
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <h3>Mine Annoncer</h3>
@@ -41,8 +42,9 @@ else
                         {
                             @foreach (var anmodning in anmodninger)
                             {
+                                var køber = alleBrugere.FirstOrDefault(b => b.brugerID == anmodning.brugerID);
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span>@anmodning.dato.ToShortDateString() - <strong>@anmodning.status</strong></span>
+                                    <span><strong>@(køber?.Navn ?? "Ukendt")</strong> - @anmodning.dato.ToShortDateString() - <strong>@anmodning.status</strong></span>
                                     @if (anmodning.status == "Afventer")
                                     {
                                         <div>
@@ -67,6 +69,7 @@ else
 @code {
     private List<annoncer> mineAnnoncer = new();
     private List<købsanmodninger> alleAnmodninger = new();
+    private List<bruger> alleBrugere = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,6 +84,7 @@ else
         mineAnnoncer = alleAnnoncer.Where(a => a.brugerID == currentUser.brugerID).ToList();
 
         alleAnmodninger = await købsService.GetAll();
+        alleBrugere = await brugerService.GetAll();
         StateHasChanged();
     }
 
@@ -91,6 +95,16 @@ else
 
         annonce.status = "Solgt";
         await itemService.Update(annonce);
+
+        var andreAnmodninger = alleAnmodninger
+            .Where(k => k.annonceId == annonce.annonceId && k.købsanmodningID != anmodning.købsanmodningID && k.status == "Afventer")
+            .ToList();
+
+        foreach (var anden in andreAnmodninger)
+        {
+            anden.status = "Afvist";
+            await købsService.Update(anden);
+        }
 
         StateHasChanged();
     }

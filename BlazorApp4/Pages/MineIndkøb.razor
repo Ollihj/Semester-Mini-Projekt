@@ -2,15 +2,12 @@
 @using BlazorApp4.Service
 @using Core.Models
 @inject IKøbsanmodningerService købsService
+@inject IItemService itemService
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <h3>Mine Indkøb</h3>
 
-@if (mineKøbsanmodninger == null)
-{
-    <p>Loading...</p>
-}
-else if (!mineKøbsanmodninger.Any())
+@if (!mineKøbsanmodninger.Any())
 {
     <p>Du har ingen købsanmodninger endnu.</p>
 }
@@ -19,14 +16,14 @@ else
     <div class="row">
         @foreach (var køb in mineKøbsanmodninger)
         {
+            var annonce = alleAnnoncer.FirstOrDefault(a => a.annonceId == køb.annonceId);
             <div class="col-md-6 mb-3">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Købsanmodning ID: @køb.købsanmodningID</h5>
-                        <p class="card-text"><strong>Annonce ID:</strong> @køb.annonceId</p>
+                        <h5 class="card-title">@(annonce?.Titel ?? "Ukendt annonce")</h5>
+                        <p class="card-text"><strong>Pris:</strong> @(annonce?.pris ?? 0) kr.</p>
                         <p class="card-text"><strong>Status:</strong> @køb.status</p>
                         <p class="card-text"><small class="text-muted">Dato: @køb.dato.ToShortDateString()</small></p>
-                        <!-- TODO: Later show actual ad details instead of just ID -->
                     </div>
                 </div>
             </div>
@@ -36,6 +33,7 @@ else
 
 @code {
     private List<købsanmodninger> mineKøbsanmodninger = new();
+    private List<annoncer> alleAnnoncer = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -48,6 +46,8 @@ else
 
         var alleKøbsanmodninger = await købsService.GetAll();
         mineKøbsanmodninger = alleKøbsanmodninger.Where(k => k.brugerID == currentUser.brugerID).ToList();
+
+        alleAnnoncer = await itemService.GetAll();
         StateHasChanged();
     }
 }

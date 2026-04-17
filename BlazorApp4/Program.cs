@@ -13,6 +13,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(Config.ServerUrl) });
 builder.Services.AddScoped<IItemService, ItemServiceHttp>();
 builder.Services.AddScoped<IKøbsanmodningerService, KøbsanmodningerServiceHttp>();
+builder.Services.AddScoped<IBrugerService, BrugerServiceHttp>();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddBlazoredLocalStorage();
 
