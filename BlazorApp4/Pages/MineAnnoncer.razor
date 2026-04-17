@@ -2,15 +2,12 @@
 @using BlazorApp4.Service
 @using Core.Models
 @inject IItemService itemService
+@inject IKøbsanmodningerService købsService
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <h3>Mine Annoncer</h3>
 
-@if (mineAnnoncer == null)
-{
-    <p>Loading...</p>
-}
-else if (!mineAnnoncer.Any())
+@if (!mineAnnoncer.Any())
 {
     <p>Du har ingen annoncer endnu.</p>
 }
@@ -19,16 +16,48 @@ else
     <div class="row">
         @foreach (var annonce in mineAnnoncer)
         {
-            <div class="col-md-4 mb-3">
+            <div class="col-md-6 mb-4">
                 <div class="card">
-                     <div class="card-body">
-                         <h5 class="card-title">@annonce.Titel</h5>
-                         <p class="card-text">@annonce.Description</p>
-                         <p class="card-text"><strong>Pris:</strong> @annonce.pris kr</p>
-                         <p class="card-text"><small class="text-muted">Oprettet: @annonce.oprettet.ToShortDateString()</small></p>
-                         <p class="card-text"><small class="text-muted">Kategori: @annonce.kategori</small></p>
-                         <button class="btn btn-danger btn-sm" @onclick="() => SletAnnonce(annonce.annonceId)">Slet</button>
-                     </div>
+                    <div class="card-body">
+                        <h5 class="card-title">@annonce.Titel</h5>
+                        <p class="card-text">@annonce.Description</p>
+                        <p class="card-text"><strong>Pris:</strong> @annonce.pris kr</p>
+                        <p class="card-text"><strong>Kategori:</strong> @annonce.kategori</p>
+                        <span class="badge bg-success">@annonce.status</span>
+
+                        <hr />
+
+                        <h6>Indkomne anmodninger</h6>
+
+                        @{
+                            var anmodninger = alleAnmodninger.Where(k => k.annonceId == annonce.annonceId).ToList();
+                        }
+
+                        @if (!anmodninger.Any())
+                        {
+                            <p class="text-muted">Ingen anmodninger endnu.</p>
+                        }
+                        else
+                        {
+                            @foreach (var anmodning in anmodninger)
+                            {
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span>@anmodning.dato.ToShortDateString() - <strong>@anmodning.status</strong></span>
+                                    @if (anmodning.status == "Afventer")
+                                    {
+                                        <div>
+                                            <button class="btn btn-success btn-sm me-1" @onclick="() => AccepterAnmodning(anmodning, annonce)">Accepter</button>
+                                            <button class="btn btn-danger btn-sm" @onclick="() => AfvisAnmodning(anmodning)">Afvis</button>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+
+                        <div class="mt-2">
+                            <button class="btn btn-danger btn-sm" @onclick="() => SletAnnonce(annonce.annonceId)">Slet annonce</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         }
@@ -37,25 +66,41 @@ else
 
 @code {
     private List<annoncer> mineAnnoncer = new();
+    private List<købsanmodninger> alleAnmodninger = new();
 
     protected override async Task OnInitializedAsync()
     {
-        // HENT DEN LOGGEDE BRUGER
-        bruger? currentUser = await LocalStorage.GetItemAsync<bruger>("user");
+        var currentUser = await LocalStorage.GetItemAsync<bruger>("user");
 
         if (currentUser == null || string.IsNullOrEmpty(currentUser.brugerID))
         {
-            mineAnnoncer = new();
             return;
         }
 
-        // HENT ALLE ANNONCER
         var alleAnnoncer = await itemService.GetAll();
+        mineAnnoncer = alleAnnoncer.Where(a => a.brugerID == currentUser.brugerID).ToList();
 
-        // FILTRÉR PÅ BRUGERID
-        mineAnnoncer = alleAnnoncer
-            .Where(a => a.brugerID == currentUser.brugerID)
-            .ToList();
+        alleAnmodninger = await købsService.GetAll();
+        StateHasChanged();
+    }
+
+    private async Task AccepterAnmodning(købsanmodninger anmodning, annoncer annonce)
+    {
+        anmodning.status = "Accepteret";
+        await købsService.Update(anmodning);
+
+        annonce.status = "Solgt";
+        await itemService.Update(annonce);
+
+        StateHasChanged();
+    }
+
+    private async Task AfvisAnmodning(købsanmodninger anmodning)
+    {
+        anmodning.status = "Afvist";
+        await købsService.Update(anmodning);
+
+        StateHasChanged();
     }
 
     private async Task SletAnnonce(string annonceId)
@@ -64,10 +109,7 @@ else
             return;
 
         await itemService.DeleteById(annonceId);
-        
-        // Fjern annoncen fra listen
         mineAnnoncer = mineAnnoncer.Where(a => a.annonceId != annonceId).ToList();
         StateHasChanged();
     }
 }
-
