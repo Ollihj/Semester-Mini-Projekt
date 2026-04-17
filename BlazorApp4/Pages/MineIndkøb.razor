@@ -1,7 +1,8 @@
 @page "/mineindkøb"
 @using BlazorApp4.Service
 @using Core.Models
-@inject IItemService itemService
+@inject IKøbsanmodningerService købsService
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <h3>Mine Indkøb</h3>
 
@@ -38,24 +39,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // TODO: Create IKøbsanmodningService and implement this properly
-        // For now, this is just a placeholder
+        var currentUser = await LocalStorage.GetItemAsync<bruger>("user");
 
-        // Placeholder data for demonstration
-        mineKøbsanmodninger = new List<købsanmodninger>
+        if (currentUser == null || string.IsNullOrEmpty(currentUser.brugerID))
         {
-            new købsanmodninger
-            {
-                købsanmodningID = "køb1",
-                annonceId = "annonce1",
-                status = "Pending",
-                dato = DateTime.Now.AddDays(-2),
-                brugerID = "user123"
-            }
-        };
+            return;
+        }
 
-        // Later this will be:
-        // var alleKøbsanmodninger = await købsanmodningService.GetAll();
-        // mineKøbsanmodninger = alleKøbsanmodninger.Where(k => k.brugerID == currentUserId).ToList();
+        var alleKøbsanmodninger = await købsService.GetAll();
+        mineKøbsanmodninger = alleKøbsanmodninger.Where(k => k.brugerID == currentUser.brugerID).ToList();
+        StateHasChanged();
     }
 }
