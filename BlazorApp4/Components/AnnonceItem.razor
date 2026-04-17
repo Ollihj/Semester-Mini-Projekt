@@ -2,7 +2,7 @@
 
 @inject NavigationManager Navigation
 
-<div class="card h-100" style="cursor:pointer;" @onclick="GaTilDetail">
+<div class="card annonce-card h-100" @onclick="GaTilDetail">
     @if (!string.IsNullOrEmpty(Item.billedeUrl))
     {
         <img src="@Item.billedeUrl" class="card-img-top" style="height:200px; object-fit:cover;" alt="billede" />
