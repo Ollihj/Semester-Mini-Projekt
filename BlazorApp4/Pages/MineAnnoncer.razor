@@ -21,13 +21,14 @@ else
         {
             <div class="col-md-4 mb-3">
                 <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">@annonce.Titel</h5>
-                        <p class="card-text">@annonce.Description</p>
-                        <p class="card-text"><strong>Pris:</strong> @annonce.pris kr</p>
-                        <p class="card-text"><small class="text-muted">Oprettet: @annonce.oprettet.ToShortDateString()</small></p>
-                        <p class="card-text"><small class="text-muted">Kategori: @annonce.kategori</small></p>
-                    </div>
+                     <div class="card-body">
+                         <h5 class="card-title">@annonce.Titel</h5>
+                         <p class="card-text">@annonce.Description</p>
+                         <p class="card-text"><strong>Pris:</strong> @annonce.pris kr</p>
+                         <p class="card-text"><small class="text-muted">Oprettet: @annonce.oprettet.ToShortDateString()</small></p>
+                         <p class="card-text"><small class="text-muted">Kategori: @annonce.kategori</small></p>
+                         <button class="btn btn-danger btn-sm" @onclick="() => SletAnnonce(annonce.annonceId)">Slet</button>
+                     </div>
                 </div>
             </div>
         }
@@ -55,6 +56,18 @@ else
         mineAnnoncer = alleAnnoncer
             .Where(a => a.brugerID == currentUser.brugerID)
             .ToList();
+    }
+
+    private async Task SletAnnonce(string annonceId)
+    {
+        if (string.IsNullOrEmpty(annonceId))
+            return;
+
+        await itemService.DeleteById(annonceId);
+        
+        // Fjern annoncen fra listen
+        mineAnnoncer = mineAnnoncer.Where(a => a.annonceId != annonceId).ToList();
+        StateHasChanged();
     }
 }
 
