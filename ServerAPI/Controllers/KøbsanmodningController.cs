@@ -5,7 +5,7 @@ using ServerAPI.Repositories;
 namespace ServerAPI.Controllers;
 
 [ApiController]
-[Route("api/købsanmodning")]
+[Route("api/koebsanmodning")]
 public class KøbsanmodningController : ControllerBase
 {
     private readonly IKøbsanmodningRepository _repository;
