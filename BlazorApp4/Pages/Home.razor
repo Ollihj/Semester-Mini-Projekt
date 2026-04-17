@@ -44,6 +44,9 @@
 }
 
 <div class="mt-4">
+    <div class="mb-3">
+        <input type="text" class="form-control" placeholder="Søg efter annonce..." @oninput="Søg" />
+    </div>
     <label>Filtrer efter kategori</label>
     <select class="form-control mb-3" style="max-width:250px;" @onchange="FiltererAnnoncer">
         <option value="">Alle kategorier</option>
@@ -70,6 +73,7 @@
     private annoncer nyAnnonce = new();
     private bool visFormular = false;
     private Core.Models.bruger? currentUser;
+    private string søgeord = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -88,6 +92,19 @@
         annonceList = await itemService.GetAll();
         filtreredeAnnoncer = new List<annoncer>(annonceList);
         StateHasChanged();
+    }
+
+    private void Søg(ChangeEventArgs e)
+    {
+        søgeord = e.Value?.ToString() ?? "";
+        if (string.IsNullOrEmpty(søgeord))
+        {
+            filtreredeAnnoncer = new List<annoncer>(annonceList);
+        }
+        else
+        {
+            filtreredeAnnoncer = annonceList.Where(a => a.Titel.Contains(søgeord, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
     }
 
     private void FiltererAnnoncer(ChangeEventArgs e)
