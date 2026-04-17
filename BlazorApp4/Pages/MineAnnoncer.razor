@@ -2,6 +2,7 @@
 @using BlazorApp4.Service
 @using Core.Models
 @inject IItemService itemService
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 <h3>Mine Annoncer</h3>
 
@@ -38,10 +39,22 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        
-        string currentUserId = "user123"; // Placeholder - replace with actual user ID
+        // HENT DEN LOGGEDE BRUGER
+        bruger? currentUser = await LocalStorage.GetItemAsync<bruger>("user");
 
+        if (currentUser == null || string.IsNullOrEmpty(currentUser.brugerID))
+        {
+            mineAnnoncer = new();
+            return;
+        }
+
+        // HENT ALLE ANNONCER
         var alleAnnoncer = await itemService.GetAll();
-        mineAnnoncer = alleAnnoncer.Where(a => a.brugerID == currentUserId).ToList();
+
+        // FILTRÉR PÅ BRUGERID
+        mineAnnoncer = alleAnnoncer
+            .Where(a => a.brugerID == currentUser.brugerID)
+            .ToList();
     }
 }
+
